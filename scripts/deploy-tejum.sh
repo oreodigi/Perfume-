@@ -26,7 +26,7 @@ INSTALLED_SHA="$(cat "$APP_DIR/.installed-lock-sha" 2>/dev/null || true)"
 if [[ "$LOCK_SHA" != "$INSTALLED_SHA" || ! -x node_modules/.bin/next ]]; then
   echo "Installing dependencies (lockfile changed or node_modules missing)"
   npm ci --no-audit --no-fund --prefer-offline --fetch-retries=1 --fetch-timeout=45000
-  printf '%s\\n' "$LOCK_SHA" > "$APP_DIR/.installed-lock-sha"
+  echo "$LOCK_SHA" > "$APP_DIR/.installed-lock-sha"
 else
   echo "Reusing installed dependencies (lockfile unchanged)"
 fi
