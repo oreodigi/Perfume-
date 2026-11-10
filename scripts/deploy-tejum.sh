@@ -21,7 +21,7 @@ fi
 echo "[$(date -Is)] Deploying perfume commit $LATEST"
 # This resets only the dedicated source checkout; no other server files.
 git reset --hard origin/main >/dev/null
-npm install --no-audit --no-fund --prefer-offline
+npm ci --no-audit --no-fund --prefer-offline
 npm run typecheck
 npm run build
 test -s out/index.html

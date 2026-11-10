@@ -21,7 +21,7 @@ Requires Node.js >=20.9 and npm.
 ```bash
 npm install
 npm run dev
-# open http://localhost:3000
+# open http://localhost:3000/perfumes/
 npm run typecheck
 npm run build
 ```
@@ -32,11 +32,11 @@ npm run build
 2. **Creative:** provide licensed product still-life/campaign images, logo, final brand copy, and fragrance catalog. CSS-based editorial layouts and remote Unsplash imagery are temporary placeholders.
 3. **Motion:** complete matching seamless bottle hand-offs, single-clock synchronized animation, shader-based scent mist, and momentum for collection photo arcs. Test animation and touch interactions on real phones.
 4. **Commerce:** connect inventory, catalog, checkout, real email/domain, legal policies, delivery, and analytics only after store requirements are approved. Current `bonjour@ecorce.example` is **not a functioning inbox**.
-5. **Quality gate:** install dependencies, run `npm run typecheck` and `npm run build`, verify reduced-motion, WebGL-off/fallback, touch drag, popstate, mobile performance and accessibility. GitHub CI is configured to run after a lockfile is generated.
+5. **Quality gate:** install dependencies, run `npm run typecheck` and `npm run build`, verify reduced-motion, WebGL-off/fallback, touch drag, popstate, mobile performance and accessibility. GitHub CI installs from the committed lockfile and verifies the static export.
 
 ## Deployment
 
-A typical Node-hosted deployment uses `npm install && npm run build && npm start`. No server or domain has been connected by this commit. The external Google Fonts and Unsplash images require network access; replace them with locally hosted/licensed assets for production.
+**Live:** https://tejum.in/perfumes/\n\n- Host: `server.tejum.cloud` (cPanel account `tejum`).\n- GitHub source: `main` of `oreodigi/Perfume-`.\n- Source checkout (outside public web root): `/home/tejum/perfumes-source`.\n- Published static files: `/home/tejum/public_html/perfumes`.\n- Auto-deploy: cPanel user crontab checks GitHub **every 2 minutes** and runs `scripts/deploy-tejum.sh`. It fetches `main`, installs locked dependencies, type-checks, builds Next.js' static export, and publishes only after a successful build. No manual reload or Node server is needed.\n- Deployment logs: `/home/tejum/perfumes-deploy.log`; deployed SHA: `/home/tejum/perfumes-source/.deployed-revision`.\n- If a build fails, the previously deployed site remains online. The next scheduled check tries again. Revert/fix and push to `main` to recover.\n- This project intentionally uses `output: "export"`, `basePath: "/perfumes"`, and `trailingSlash: true`. Local preview is `http://localhost:3000/perfumes/`. The `next start` command does not serve this export.\n\nThe external Google Fonts and Unsplash images require network access; replace them with locally hosted/licensed assets for production.
 
 ## Reference acknowledgement
 
