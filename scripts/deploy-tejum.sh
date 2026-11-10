@@ -21,7 +21,15 @@ fi
 echo "[$(date -Is)] Deploying perfume commit $LATEST"
 # This resets only the dedicated source checkout; no other server files.
 git reset --hard origin/main >/dev/null
-npm ci --no-audit --no-fund --prefer-offline
+LOCK_SHA="$(sha256sum package-lock.json | awk '{print $1}')"
+INSTALLED_SHA="$(cat "$APP_DIR/.installed-lock-sha" 2>/dev/null || true)"
+if [[ "$LOCK_SHA" != "$INSTALLED_SHA" || ! -x node_modules/.bin/next ]]; then
+  echo "Installing dependencies (lockfile changed or node_modules missing)"
+  npm ci --no-audit --no-fund --prefer-offline --fetch-retries=1 --fetch-timeout=45000
+  printf '%s\\n' "$LOCK_SHA" > "$APP_DIR/.installed-lock-sha"
+else
+  echo "Reusing installed dependencies (lockfile unchanged)"
+fi
 npm run typecheck
 npm run build
 test -s out/index.html
