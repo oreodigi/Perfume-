@@ -279,7 +279,7 @@ export default function PerfumeExperience() {
           <div className="intro-center">
             <span className="eyebrow intro-eyebrow">WELCOME TO THE HOUSE</span>
             <h1>ÉCORCE<span className="intro-dot">.</span></h1>
-            <p>Ten scents. A thousand memories.</p>
+            <p>Sixteen scents. A thousand memories.</p>
             <div className="intro-mist" style={{ opacity: hold / 105, transform: `translate(-50%, -50%) scale(${1 + hold / 27})` }} aria-hidden="true" />
             <button className="hold-button" onPointerDown={startHold} onPointerUp={stopHold} onPointerCancel={stopHold} onLostPointerCapture={stopHold} aria-label="Press and hold for one second to enter">
               <span className="hold-ring" style={{ background: `conic-gradient(var(--red) ${hold}%, rgba(110,26,30,.13) ${hold}% 100%)` }}><span>✳</span></span>
@@ -307,7 +307,7 @@ export default function PerfumeExperience() {
       {view === "home" ? (
         <main>
           <section className="home-hero" id="collection">
-            <div className="hero-topline enter-up"><span>AN EXPLORATION IN TEN PARTS</span><span>EXTRAITS DE PARFUM / NO. 01—10</span></div>
+            <div className="hero-topline enter-up"><span>AN EXPLORATION IN SIXTEEN PARTS</span><span>EXTRAITS DE PARFUM / NO. 01—16</span></div>
             <div className="hero-headline enter-up" aria-hidden="true"><span>THE ART OF</span><em>feeling</em></div>
             <div className="seal" aria-hidden="true">
               <div className="seal-outline" />
@@ -330,11 +330,11 @@ export default function PerfumeExperience() {
               <span ref={pillRef} className={`view-pill ${hovering ? "is-visible" : ""}`} aria-hidden="true">VIEW <ArrowIcon /></span>
             </div>
             <div className="carousel-bottom enter-up">
-              <div className="carousel-step"><span>SCENT {featured.number}</span><span className="step-track"><span style={{ width: `${((activeIndex + 1) / fragrances.length) * 100}%` }} /></span><span>10</span></div>
+              <div className="carousel-step"><span>SCENT {featured.number}</span><span className="step-track"><span style={{ width: `${((activeIndex + 1) / fragrances.length) * 100}%` }} /></span><span>{fragrances.length}</span></div>
               <div className="carousel-feature"><span className="eyebrow">CURRENTLY EXPLORING</span><h2>{featured.name}</h2><p>{featured.category}</p></div>
               <div className="carousel-controls">
-                <button aria-label="Previous perfume" disabled={activeIndex === 0} onClick={() => setOffset(clamp(activeIndex - 1, 0, 9))}><ArrowIcon direction="left" /></button>
-                <button aria-label="Next perfume" disabled={activeIndex === 9} onClick={() => setOffset(clamp(activeIndex + 1, 0, 9))}><ArrowIcon /></button>
+                <button aria-label="Previous perfume" disabled={activeIndex === 0} onClick={() => setOffset(clamp(activeIndex - 1, 0, fragrances.length - 1))}><ArrowIcon direction="left" /></button>
+                <button aria-label="Next perfume" disabled={activeIndex === fragrances.length - 1} onClick={() => setOffset(clamp(activeIndex + 1, 0, fragrances.length - 1))}><ArrowIcon /></button>
                 <button className="explore-pill" onClick={() => openScent(activeIndex)}>EXPLORE SCENT <ArrowIcon /></button>
               </div>
             </div>
@@ -352,7 +352,7 @@ export default function PerfumeExperience() {
               <h2>Not just a fragrance.<br /><em>A feeling.</em></h2>
               <p>Some memories never fade. A first encounter. Sun on warm stone. The quiet intensity of a night that did not want to end. At ÉCORCE, every composition begins with that feeling.</p>
               <button className="underlined-link" onClick={() => document.getElementById("the-edit")?.scrollIntoView({ behavior: "smooth" })}>EXPLORE THE HOUSE <ArrowIcon /></button>
-              <div className="editorial-stat"><b>10</b><span>OLFACTORY<br/>PORTRAITS</span><span className="editorial-stat-line"/></div>
+              <div className="editorial-stat"><b>{fragrances.length}</b><span>OLFACTORY<br/>PORTRAITS</span><span className="editorial-stat-line"/></div>
             </div>
           </section>
 
@@ -367,7 +367,7 @@ export default function PerfumeExperience() {
             <div className="section-topline"><span>03 / DISCOVER YOUR SCENT</span><span>THE ÉCORCE COLLECTION</span></div>
             <div className="collection-intro reveal-on-scroll">
               <div><span className="eyebrow">THE FRAGRANCE LIBRARY</span><h2>Find your <em>signature.</em></h2></div>
-              <p>Ten distinct worlds. From luminous florals to woods that linger on skin. Explore the edit, then step inside the story behind each scent.</p>
+              <p>Sixteen distinct worlds. From luminous florals to woods that linger on skin. Explore the edit, then step inside the story behind each scent.</p>
             </div>
             <div className="collection-filters" role="group" aria-label="Filter fragrances">
               {familyOptions.map(item => <button key={item} className={family === item ? "filter-chip selected" : "filter-chip"} aria-pressed={family === item} onClick={() => setFamily(item)}>{item}</button>)}
@@ -379,7 +379,7 @@ export default function PerfumeExperience() {
                   <span className="collection-card-art">
                     <span className="card-sun" />
                     <BottleAnchor scent={item} variant="edit" />
-                    <span className="card-corner">Nº {item.number} / 10</span>
+                    <span className="card-corner">Nº {item.number} / {fragrances.length}</span>
                     <span className="card-explore">DISCOVER ↗</span>
                   </span>
                   <span className="collection-card-information"><span><strong>{item.name}</strong><small>{item.category}</small></span><span className="collection-card-arrow"><ArrowIcon/></span></span>
@@ -438,13 +438,13 @@ export default function PerfumeExperience() {
       ) : (
         <main key={scent.slug}>
           <section className="product-hero" style={{ "--scent-glow": scent.glow } as CSSProperties}>
-            <div className="product-intro-bar enter-up"><span>EXTRAIT DE PARFUM</span><span>01 / 10 — AN OLFACTORY PORTRAIT</span><span>50 ML · CONCEPT EDITION</span></div>
+            <div className="product-intro-bar enter-up"><span>EXTRAIT DE PARFUM</span><span>{scent.number} / {fragrances.length} — AN OLFACTORY PORTRAIT</span><span>50 ML · CONCEPT EDITION</span></div>
             <div className="product-title enter-up"><span>{scent.name.split(" ")[0]}</span><em>{scent.name.split(" ").slice(1).join(" ")}</em></div>
             <div className="sun-shadow" aria-hidden="true" />
             <div className="still-life-plinth" aria-hidden="true"><div className="plinth-top"/><div className="plinth-front"/></div>
             <div className="plant-shadow" aria-hidden="true">✺</div>
             <BottleAnchor scent={scent} variant="product" />
-            <div className="hero-side-note"><span>NO. {scent.number} / 10</span><span>{scent.category.toUpperCase()}</span></div>
+            <div className="hero-side-note"><span>NO. {scent.number} / {fragrances.length}</span><span>{scent.category.toUpperCase()}</span></div>
             <div className="product-hero-bottom enter-up">
               <div><span className="eyebrow">A STUDY IN SCENT</span><p>{scent.subtitle}</p></div>
               <button className="action-pill" onClick={() => document.getElementById("scent-story")?.scrollIntoView({ behavior: "smooth" })}>DISCOVER THE STORY <ArrowIcon /></button>
@@ -479,7 +479,7 @@ export default function PerfumeExperience() {
 
           <section className="other-scents" id="other-scents">
             <div className="section-counter">02 / THE COLLECTION</div>
-            <div className="other-top reveal-on-scroll"><div><span className="eyebrow">A HOUSE OF TEN</span><h2>Other <em>extraits.</em></h2></div><p>Every bottle contains another world.<br />Drag across to discover your next story.</p></div>
+            <div className="other-top reveal-on-scroll"><div><span className="eyebrow">A HOUSE OF SIXTEEN</span><h2>Other <em>extraits.</em></h2></div><p>Every bottle contains another world.<br />Drag across to discover your next story.</p></div>
             <div className="other-scroller" role="region" aria-label="Other fragrances; scroll horizontally" tabIndex={0}>
               <div className="other-card other-yours"><div className="yours-frame"><span>✳</span><strong>YOURS</strong></div><small>YOU ARE HERE</small><strong>{scent.name}</strong></div>
               {others.map((item) => <button className="other-card" key={item.slug} onClick={() => openScent(fragrances.findIndex((candidate) => candidate.slug === item.slug))}>
