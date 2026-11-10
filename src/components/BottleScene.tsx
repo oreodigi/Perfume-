@@ -84,7 +84,7 @@ function BottleModel({ scent }: { scent: Fragrance }) {
   const label = useMemo(() => makeLabel(scent), [scent]);
   useEffect(() => () => { bodyGeometry.dispose(); label?.dispose(); }, [bodyGeometry, label]);
   const liquid = useMemo(() => new THREE.Color(scent.color), [scent.color]);
-  const front = design === 3 || design === 4 ? 0.58 : design === 2 ? 0.29 : 0.33;
+  const front = design === 3 || design === 4 ? 0.65 : design === 2 ? 0.36 : 0.38;
   const labelWidth = design === 2 ? 0.67 : 0.79;
   const cylinderCap = design === 1 || design === 3;
   const capColor = design === 2 ? "#241b18" : design === 4 ? "#59422f" : design === 1 ? "#c3a574" : "#30211d";
