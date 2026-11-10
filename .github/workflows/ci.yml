@@ -1,7 +1,12 @@
-name: Verify perfume experience
+name: Build and publish perfume site
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -15,3 +20,18 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: test -s out/index.html
+      - name: Publish verified static export
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          echo "$GITHUB_SHA" > out/.source-revision
+          touch out/.nojekyll
+          cd out
+          git init -b publish
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Static export from $GITHUB_SHA"
+          git push --force "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:refs/heads/deploy-perfumes
