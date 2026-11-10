@@ -64,4 +64,35 @@ export const fragrances: Fragrance[] = [
     ingredients: ["Black Pepper", "Petitgrain", "Hinoki", "Cedarwood", "Frankincense", "Soft Musk"],
     story: "Deep in the forest, the air is cool and the trees carry their own ancient language.", texture: "forest shade",
   },
+
+  {
+    slug: "soleil-dambre", number: "11", name: "Soleil d’Ambre", subtitle: "Where light lingers", category: "Citrus • Amber", color: "#c18b43", glow: "#e2c28c", notes: ["Bitter orange", "Orange blossom", "Golden amber"],
+    ingredients: ["Bitter Orange", "Pink Grapefruit", "Orange Blossom", "Neroli", "Golden Amber", "Sandalwood"],
+    story: "The warmth of the afternoon sun falling across a linen shirt. A golden citrus impression that slowly becomes intimate.", texture: "sun-drenched linen",
+  },
+  {
+    slug: "noir-vanille", number: "12", name: "Noir Vanille", subtitle: "Softness with an edge", category: "Gourmand • Spiced", color: "#735040", glow: "#c6a18a", notes: ["Cacao", "Black vanilla", "Tonka"],
+    ingredients: ["Cacao", "Pink Pepper", "Black Vanilla", "Tonka", "Amberwood", "Soft Musk"],
+    story: "A midnight café, rich chocolate on the tongue, warm conversation and the sweetness of an unexpected moment.", texture: "midnight cacao",
+  },
+  {
+    slug: "jardin-de-pluie", number: "13", name: "Jardin de Pluie", subtitle: "The garden after rain", category: "Green • Floral", color: "#798e75", glow: "#c0d1bd", notes: ["Petitgrain", "Rain lily", "Moss"],
+    ingredients: ["Petitgrain", "Green Leaves", "Rain Lily", "White Tea", "Tree Moss", "Cedar"],
+    story: "The first breath after a summer shower. Crushed leaves, wet garden paths and the sense that everything has begun again.", texture: "rain-soaked garden",
+  },
+  {
+    slug: "rose-minerale", number: "14", name: "Rose Minérale", subtitle: "A different kind of rose", category: "Floral • Mineral", color: "#a97877", glow: "#dbb9b5", notes: ["Rose water", "Pink pepper", "Clean musk"],
+    ingredients: ["Rose Water", "Pink Pepper", "Peony", "Mineral Salt", "Clean Musk", "Pale Woods"],
+    story: "A single rose in a stone courtyard: delicate petals, cool mineral air and an unexpected modern clarity.", texture: "rose on stone",
+  },
+  {
+    slug: "oud-silencieux", number: "15", name: "Oud Silencieux", subtitle: "Depth without noise", category: "Oud • Woody", color: "#493b31", glow: "#a7957e", notes: ["Oud wood", "Black incense", "Leather"],
+    ingredients: ["Oud Wood", "Black Incense", "Saffron", "Suede", "Cedar", "Resin"],
+    story: "An ancient library at dusk. Polished wood, inked pages and the quiet confidence of a fragrance that never has to announce itself.", texture: "aged walnut",
+  },
+  {
+    slug: "aube-blanche", number: "16", name: "Aube Blanche", subtitle: "The lightest touch", category: "Fresh • Musky", color: "#c2bdae", glow: "#e8e2d7", notes: ["Bergamot", "Cotton flower", "White musk"],
+    ingredients: ["Bergamot", "Cotton Flower", "Iris", "Rice Milk", "White Musk", "Soft Cedar"],
+    story: "White curtains moving in a cool morning breeze. Clean skin, a quietly sunlit room and infinite possibility.", texture: "morning linen",
+  },
 ];
