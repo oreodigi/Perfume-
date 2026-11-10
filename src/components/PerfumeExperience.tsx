@@ -17,6 +17,15 @@ import { fragrances, type Fragrance } from "@/data/fragrances";
 
 const BottleScene = dynamic(() => import("./BottleScene"), { ssr: false });
 const EMAIL = "bonjour@ecorce.example";
+const PHOTO = {
+  rouge: "/perfumes/editorial/rouge.jpg",
+  floral: "/perfumes/editorial/floral.jpg",
+  atelier: "/perfumes/editorial/atelier.jpg",
+  night: "/perfumes/editorial/night.jpg",
+  ritual: "/perfumes/editorial/ritual.jpg",
+};
+const familyOptions = ["All", "Floral", "Woody", "Amber", "Fresh"] as const;
+type Family = typeof familyOptions[number];
 const clamp = (value: number, low: number, high: number) => Math.min(high, Math.max(low, value));
 
 type View = "home" | "detail";
@@ -62,6 +71,9 @@ export default function PerfumeExperience() {
   const [hovering, setHovering] = useState(false);
   const [width, setWidth] = useState(1280);
   const [demoBag, setDemoBag] = useState(0);
+  const [family, setFamily] = useState<Family>("All");
+  const [quizMood, setQuizMood] = useState("Mysterious");
+  const [quizMoment, setQuizMoment] = useState("After dark");
   const scent = fragrances[current];
   const activeIndex = clamp(Math.round(offset), 0, fragrances.length - 1);
   const featured = fragrances[activeIndex];
@@ -233,6 +245,19 @@ export default function PerfumeExperience() {
   };
 
   const others = useMemo(() => fragrances.filter((item) => item.slug !== scent.slug), [scent.slug]);
+  const collection = useMemo(() => fragrances.filter((item) => {
+    if (family === "All") return true;
+    const words = (item.category + " " + item.notes.join(" ")).toLowerCase();
+    if (family === "Floral") return /floral|rose|iris|gardenia|neroli|violet/.test(words);
+    if (family === "Woody") return /woody|wood|cedar|vetiver|hinoki|leather/.test(words);
+    if (family === "Amber") return /amber|resin|spic|oud|saffron|labdanum/.test(words);
+    return /fresh|green|marine|mineral|fig|juniper|sea/.test(words);
+  }), [family]);
+  const suggestedIndex = quizMood === "Romantic" ? (quizMoment === "Daylight" ? 5 : 0)
+    : quizMood === "Grounded" ? (quizMoment === "Daylight" ? 4 : 9)
+    : quizMood === "Effortless" ? (quizMoment === "Daylight" ? 7 : 3)
+    : (quizMoment === "Daylight" ? 6 : 2);
+  const suggested = fragrances[suggestedIndex];
 
   const copyEmail = async () => {
     try {
@@ -270,7 +295,7 @@ export default function PerfumeExperience() {
         <button className="brand" onClick={goHome} aria-label="Écorce — return home">ÉCORCE<span>✳</span></button>
         <span className="nav-center">MAISON DE PARFUM <i>·</i> PARIS, IMAGINED</span>
         <div className="nav-actions">
-          <button className="nav-link" onClick={view === "home" ? () => document.getElementById("collection")?.scrollIntoView({ behavior: "smooth" }) : goHome}>
+          <button className="nav-link" onClick={view === "home" ? () => document.getElementById("the-edit")?.scrollIntoView({ behavior: "smooth" }) : goHome}>
             {view === "home" ? "THE COLLECTION" : "← ALL SCENTS"}
           </button>
           <button className="bag-button" onClick={() => setToast(`Demo bag: ${demoBag} ${demoBag === 1 ? "sample" : "samples"}. Checkout is not enabled.`)} aria-label={`Demo bag, ${demoBag} items`}>
@@ -315,12 +340,95 @@ export default function PerfumeExperience() {
             </div>
             <span className="scroll-note">SCROLL TO DISCOVER <span>↓</span></span>
           </section>
+
+          <section className="editorial-feature">
+            <div className="editorial-feature-image">
+              <img src={PHOTO.rouge} alt="Real glass perfume bottle photographed in warm editorial light" loading="lazy" decoding="async" />
+              <span className="image-credit">AN EDITORIAL STUDY IN GLASS &amp; LIGHT</span>
+            </div>
+            <div className="editorial-feature-copy">
+              <span className="section-counter">01 / THE WORLD OF ÉCORCE</span>
+              <div className="mini-asterisk">✳</div>
+              <h2>Not just a fragrance.<br /><em>A feeling.</em></h2>
+              <p>Some memories never fade. A first encounter. Sun on warm stone. The quiet intensity of a night that did not want to end. At ÉCORCE, every composition begins with that feeling.</p>
+              <button className="underlined-link" onClick={() => document.getElementById("the-edit")?.scrollIntoView({ behavior: "smooth" })}>EXPLORE THE HOUSE <ArrowIcon /></button>
+              <div className="editorial-stat"><b>10</b><span>OLFACTORY<br/>PORTRAITS</span><span className="editorial-stat-line"/></div>
+            </div>
+          </section>
+
           <section className="home-manifesto">
             <span className="eyebrow reveal-on-scroll">THE PHILOSOPHY</span>
             <h2 className="reveal-on-scroll">We don’t simply wear perfume.<br />We wear <em>the way we feel.</em></h2>
             <div className="manifesto-bottom reveal-on-scroll"><p>Born of bark, resin, blossom and memory. Ten olfactory portraits, each a world waiting to be entered.</p><button className="round-link" onClick={() => openScent(activeIndex)} aria-label={`Discover ${featured.name}`}><ArrowIcon /></button></div>
             <span className="manifesto-watermark" aria-hidden="true">É</span>
           </section>
+
+          <section className="collection-edit" id="the-edit">
+            <div className="section-topline"><span>03 / DISCOVER YOUR SCENT</span><span>THE ÉCORCE COLLECTION</span></div>
+            <div className="collection-intro reveal-on-scroll">
+              <div><span className="eyebrow">THE FRAGRANCE LIBRARY</span><h2>Find your <em>signature.</em></h2></div>
+              <p>Ten distinct worlds. From luminous florals to woods that linger on skin. Explore the edit, then step inside the story behind each scent.</p>
+            </div>
+            <div className="collection-filters" role="group" aria-label="Filter fragrances">
+              {familyOptions.map(item => <button key={item} className={family === item ? "filter-chip selected" : "filter-chip"} aria-pressed={family === item} onClick={() => setFamily(item)}>{item}</button>)}
+              <span className="collection-count">{String(collection.length).padStart(2, "0")} SCENTS</span>
+            </div>
+            <div className="collection-grid">
+              {collection.map((item) => (
+                <button className="collection-card" key={item.slug} onClick={() => openScent(fragrances.indexOf(item))} style={{ "--card-hue": item.glow } as CSSProperties}>
+                  <span className="collection-card-art">
+                    <span className="card-sun" />
+                    <BottleAnchor scent={item} variant="edit" />
+                    <span className="card-corner">Nº {item.number} / 10</span>
+                    <span className="card-explore">DISCOVER ↗</span>
+                  </span>
+                  <span className="collection-card-information"><span><strong>{item.name}</strong><small>{item.category}</small></span><span className="collection-card-arrow"><ArrowIcon/></span></span>
+                  <span className="collection-card-notes">{item.notes.join(" · ")}</span>
+                </button>
+              ))}
+            </div>
+            <p className="collection-note">ÉCORCE is an original creative perfume concept. Product renders are illustrative; there is no live checkout.</p>
+          </section>
+
+          <section className="atelier-feature">
+            <div className="atelier-feature-title"><span className="eyebrow">04 / THE ART OF PERFUMERY</span><h2>From raw material<br/>to <em>reverie.</em></h2><p>We believe the most memorable fragrance is built layer by layer—contrast, restraint and a lingering trace.</p></div>
+            <div className="atelier-feature-photo"><img src={PHOTO.atelier} alt="Authentic perfume still-life in studio light" loading="lazy" decoding="async"/><span>THE PERFUMER'S PALETTE / VOL. 01</span></div>
+            <div className="atelier-feature-bottom"><div><b>01.</b><strong>THE OPENING</strong><span>The impression that sparks curiosity.</span></div><div><b>02.</b><strong>THE HEART</strong><span>Everything intimate and unexpected.</span></div><div><b>03.</b><strong>THE TRAIL</strong><span>What remains long after the moment.</span></div></div>
+          </section>
+
+          <section className="olfactory-world">
+            <div className="section-topline"><span>05 / A WORLD OF SENSATION</span><span>MADE TO BE REMEMBERED</span></div>
+            <h2 className="reveal-on-scroll">The world is our <em>ingredient.</em></h2>
+            <div className="olfactory-tiles">
+              <button className="olfactory-tile olfactory-tile-floral" onClick={() => { setFamily("Floral"); document.getElementById("the-edit")?.scrollIntoView({behavior:"smooth"}); }}>
+                <img src={PHOTO.floral} alt="Real perfume bottle in a delicate floral editorial" loading="lazy" decoding="async" />
+                <span>01 / THE BEAUTIFUL</span><strong>Floral<br/><i>intimacy.</i></strong><small>DISCOVER FLORALS ↗</small>
+              </button>
+              <button className="olfactory-tile olfactory-tile-dark" onClick={() => { setFamily("Amber"); document.getElementById("the-edit")?.scrollIntoView({behavior:"smooth"}); }}>
+                <img src={PHOTO.night} alt="Real perfume glass bottle photographed in dramatic shadows" loading="lazy" decoding="async" />
+                <span>02 / THE UNFORGETTABLE</span><strong>Dark<br/><i>allure.</i></strong><small>DISCOVER AMBERS ↗</small>
+              </button>
+              <button className="olfactory-tile olfactory-tile-warm" onClick={() => { setFamily("Woody"); document.getElementById("the-edit")?.scrollIntoView({behavior:"smooth"}); }}>
+                <img src={PHOTO.ritual} alt="Perfume bottle still life with warm rich textures" loading="lazy" decoding="async" />
+                <span>03 / THE TIMELESS</span><strong>Quiet<br/><i>strength.</i></strong><small>DISCOVER WOODS ↗</small>
+              </button>
+            </div>
+          </section>
+
+          <section className="scent-finder">
+            <div className="scent-finder-head"><span className="eyebrow">06 / YOUR OLFACTORY PORTRAIT</span><span className="star-symbol">✳</span><h2>A scent that feels<br/>like <em>you.</em></h2><p>Not sure where to start? Choose a feeling and a moment. We'll reveal a fragrance to explore.</p></div>
+            <div className="scent-finder-controls">
+              <div><span className="finder-label">01 — WHAT FEELS LIKE YOU?</span><div className="finder-options">{["Mysterious","Romantic","Grounded","Effortless"].map(option=><button key={option} className={option === quizMood ? "chosen" : ""} onClick={()=>setQuizMood(option)} aria-pressed={option === quizMood}>{option}</button>)}</div></div>
+              <div><span className="finder-label">02 — WHEN DOES IT COME ALIVE?</span><div className="finder-options">{["Daylight","After dark"].map(option=><button key={option} className={option === quizMoment ? "chosen" : ""} onClick={()=>setQuizMoment(option)} aria-pressed={option === quizMoment}>{option}</button>)}</div></div>
+              <div className="finder-result" aria-live="polite"><span>YOUR EDITOR'S PICK</span><h3>{suggested.name}</h3><p>{suggested.subtitle} · {suggested.category}</p><button className="action-pill" onClick={()=>openScent(suggestedIndex)}>EXPLORE THIS SCENT <ArrowIcon/></button></div>
+            </div>
+          </section>
+
+          <section className="final-editorial">
+            <div className="final-editorial-photo"><img src={PHOTO.ritual} alt="Editorial perfume photograph highlighting glass and golden light" loading="lazy" decoding="async"/></div>
+            <div className="final-editorial-copy"><span className="eyebrow">07 / THE RITUAL</span><h2>The last detail.<br/><em>The first impression.</em></h2><p>Fragrance is a private luxury—a ritual performed for nobody but yourself. Find the notes that stay close. Leave a little mystery in the air.</p><button className="underlined-link" onClick={()=>openScent(0)}>STEP INTO THE SCENT <ArrowIcon/></button></div>
+          </section>
+
           <section className="home-transition">
             <span className="eyebrow">EVERY SCENT IS A STORY</span>
             <p>Find the one that feels like <em>yours.</em></p>
@@ -351,6 +459,22 @@ export default function PerfumeExperience() {
               <div className="story-body reveal-on-scroll"><p>{scent.story}</p><div className="story-divider"/><span>NOTES OF {scent.notes.join(" · ").toUpperCase()}</span></div>
             </div>
             <div className="story-word" aria-hidden="true">REMEMBER</div>
+          </section>
+
+
+          <section className="detail-editorial-story">
+            <div className="detail-editorial-copy">
+              <span className="section-counter">A CLOSER LOOK / ÉCORCE JOURNAL</span>
+              <h2>Every bottle holds<br/>a <em>memory.</em></h2>
+              <p>{scent.story}</p>
+              <div className="detail-note-row"><span>THE FIRST IMPRESSION</span><strong>{scent.notes[0]}</strong></div>
+              <div className="detail-note-row"><span>THE HEART</span><strong>{scent.notes[1]}</strong></div>
+              <div className="detail-note-row"><span>THE LASTING TRAIL</span><strong>{scent.notes[2]}</strong></div>
+            </div>
+            <div className="detail-editorial-photo">
+              <img src={Number(scent.number) % 2 ? PHOTO.rouge : PHOTO.floral} alt="Photographic inspiration: real perfume bottle in an editorial still life" loading="lazy" decoding="async" />
+              <span>EDITORIAL PHOTOGRAPHY / VISUAL INSPIRATION</span>
+            </div>
           </section>
 
           <section className="other-scents" id="other-scents">
@@ -393,6 +517,12 @@ export default function PerfumeExperience() {
               <figure className="campaign-photo campaign-photo--three"><div className="campaign-image"/><figcaption>03 — THE MEMORY</figcaption></figure>
             </div>
             <p className="gallery-fine-print">Editorial imagery is illustrative placeholder photography.</p>
+          </section>
+
+
+          <section className="wearing-guide">
+            <span className="section-counter">06 / THE RITUAL OF WEARING</span>
+            <div className="wearing-layout"><div><h2>Wear it your <em>way.</em></h2><p>Fragrance changes as it settles on skin. Give each composition the space to reveal itself—first a spark, then a story, finally a beautiful trace.</p></div><div className="wearing-steps"><div><small>01 / FIRST SPRAY</small><h3>Let it breathe.</h3><p>Allow the opening notes to settle naturally.</p></div><div><small>02 / THE HEART</small><h3>Find your moment.</h3><p>Discover the quiet notes beneath the first impression.</p></div><div><small>03 / THE TRACE</small><h3>Make it yours.</h3><p>Wear it close. Leave an impression that feels personal.</p></div></div></div>
           </section>
 
           <section className="product-cta">
